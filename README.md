@@ -1,36 +1,19 @@
 # school-demand-to-capacity
 
-FIXME: description
+## The Question
+
+> "Where are primary state schools in relation to school age children in Greater Manchester?"
+
+This project aims to produce an RShiny app which allows variable "area" inputs for the Greater Manchester (GM) region and plot the difference between capacity and demand for primary school places via a choropleth.
 
 ## Installation
 
-Download from http://example.com/FIXME.
+TBC
 
 ## Usage
 
-FIXME: explanation
-
-    $ java -jar school-demand-to-capacity-0.1.0-standalone.jar [args]
-
-## Options
-
-FIXME: listing of options this app accepts.
+TBC
 
 ## Examples
 
-...
-
-### Bugs
-
-...
-
-### Any Other Sections
-### That You Think
-### Might be Useful
-
-## License
-
-Copyright © 2017 FIXME
-
-Distributed under the Eclipse Public License either version 1.0 or (at
-your option) any later version.
+TBC
