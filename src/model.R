@@ -5,7 +5,7 @@ setwd("/Users/sunnyt/Google Drive/mc-root/ONS accelerator projects/MC-ONS Shared
 
 
 #### user parameters
-geography = "ward"
+geography = "LA"
 
 
 #### model
