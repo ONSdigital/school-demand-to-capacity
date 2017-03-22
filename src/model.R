@@ -20,7 +20,6 @@ select_boundaries_by_geography <- function(geography){
       boundaries <- readShapePoly("data/clean/LA_shapefile_GM/GM_LA.shp")
     }
   }
-  return(boundaries)
 }
 
 
