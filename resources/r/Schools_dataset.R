@@ -2,21 +2,18 @@
 library(dplyr)
 library(data.table)
 
-# set working directory
-setwd("/Users/sunnyt/Google Drive/mc-root/ONS accelerator projects/MC-ONS Shared Folder/Project 1/Data")
-
 
 #### data
 
 ## import dataset containing school capacity
-capacity <- read.csv("2015_capacity_and_forecast_underlying_data_UD1.csv", stringsAsFactors = F)
+capacity <- read.csv("data/raw/2015_capacity_and_forecast_underlying_data_UD1.csv", stringsAsFactors = F)
 
 ## import school postcodes
-postcodes <- read.csv("school postcode.csv", stringsAsFactors = F)
+postcodes <- read.csv("data/raw/school_postcode.csv", stringsAsFactors = F)
 
 ## import National Statistics postcode lookup UK
 # big file ~700 MB, takes some time to open
-postcode.lookup <- read.csv("National_Statistics_Postcode_Lookup_UK.csv", stringsAsFactors = F)
+postcode.lookup <- read.csv("data/raw/National_Statistics_Postcode_Lookup_UK.csv", stringsAsFactors = F)
 
 ## Greater Manchester LAs, taken from wikipedia https://en.wikipedia.org/wiki/Greater_Manchester_Combined_Authority#Members
 LAnames <- (c("Bolton",
@@ -77,5 +74,5 @@ library(testthat)
 }))
 
 ## write to csv
-write.csv(schools.dataset, "Generated datasets/GM_schools_dataset.csv", row.names = F)
+write.csv(schools.dataset, "data/clean/GM_schools_dataset.csv", row.names = F)
 
