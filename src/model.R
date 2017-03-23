@@ -1,5 +1,6 @@
 #install.packages("maptools")
 library(maptools)
+library(data.table)
 
 #### user parameters
 geography = "ward"
@@ -31,6 +32,16 @@ select_primary_school_population_by_geography <- function(geography){
     }
   }
 }
+
+calculate_capacity_by_geography <- function(geography){
+  capacity <- read.csv("data/clean/GM_schools_dataset.csv", stringsAsFactors = F)
+  aggregated_capacity <- aggregate(capacity$Netcapacity..1, by=list(Geography=capacity$Local.Authority.Code), FUN=sum)
+  aggregated_capacity <- setnames(aggregated_capacity, "x", "aggregated net capacity")
+  return(aggregated_capacity)
+}
+
+calculate_capacity_by_geography()
+
 
 ### run the model
 GM_boundaries_by_geography <- select_boundaries_by_geography(geography)
