@@ -1,11 +1,9 @@
 library(dplyr)
 library(data.table)
 
-# set working directory
-setwd("c:/users/danielle cornish/documents")
 
 # import Ward dataset
-wards <- read.csv("Ward_Ages_Output.csv", stringsAsFactors = F)
+wards <- read.csv("data/raw/Ward_Ages_Output.csv", stringsAsFactors = F)
 
 # aggregate ward populations to LA level
 
