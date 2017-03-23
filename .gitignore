@@ -12,7 +12,7 @@ pom.xml.asc
 *.DS_Store
 .Rproj.user/
 *.Rhistory
-
+*.RData
 
 data/raw/Local_Authority_Districts_December_2015_Full_Extent_Boundaries_in_Great_Britain.shp
 data/raw/Wards_December_2016_Full_Extent_Boundaries_in_Great_Britain.shp
