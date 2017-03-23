@@ -3,7 +3,7 @@ library(data.table)
 
 
 # import Ward dataset
-wards <- read.csv("data/raw/Ward_Ages_Output.csv", stringsAsFactors = F)
+wards <- read.csv("data/clean/ward_population.csv", stringsAsFactors = F)
 
 # aggregate ward populations to LA level
 
@@ -12,4 +12,4 @@ LA <- setnames(LA, "x", "Population")
 
 #save as csv
 
-write.csv(LA, "LA_Population.csv")
+write.csv(LA, "data/clean/LA_Population.csv")

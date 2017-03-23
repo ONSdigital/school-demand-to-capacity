@@ -11,7 +11,7 @@ slotNames(Ward_boundaries) # which is actually made up of a number of parts whic
 head(Ward_boundaries@data) # the "data" is where we see the 'attributes' of the polygons e.g. the ward name
 dim(Ward_boundaries@data) # 8668 wards - matches count on source website http://geoportal.statistics.gov.uk/datasets/afcc88affe5f450e9c03970b237a7999_1
 
-Wardnames <- read.csv("data/raw/Ward_Ages_Output.csv", stringsAsFactors = F)
+Wardnames <- read.csv("data/clean/ward_population.csv", stringsAsFactors = F)
 
 GM_Ward_boundaries <- Ward_boundaries[which(Ward_boundaries@data$wd15cd %in% Wardnames$Ward.Code),]
 
