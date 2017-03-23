@@ -54,8 +54,13 @@ GM_boundaries_by_geography <- select_boundaries_by_geography(geography)
 #View(boundaries@data)
 #plot(boundaries)
 GM_Primary_school_population_by_area_and_age <- select_primary_school_population_by_geography(geography)
-
 GM_school_capacity_by_geography <- calculate_capacity_by_geography(geography)
 
 
-
+#Tests
+#install.packages("testthat")
+library(testthat)
+(results <- test_that("Test that the number of wards is 215",
+                      {number_wards <-nrow(calculate_capacity_by_geography(geography = "ward"))
+                      expect_equal(number_wards, 215)
+                      }))
