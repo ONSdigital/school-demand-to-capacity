@@ -36,6 +36,6 @@ select_primary_school_population_by_geography <- function(geography){
 GM_boundaries_by_geography <- select_boundaries_by_geography(geography)
 #View(boundaries@data)
 #plot(boundaries)
-GM_Primary_school_population_by_area_and_age <- select_population_by_geography(geography)
+GM_Primary_school_population_by_area_and_age <- select_primary_school_population_by_geography(geography)
 
 
