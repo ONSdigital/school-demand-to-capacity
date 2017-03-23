@@ -3,7 +3,7 @@ library(maptools)
 library(data.table)
 
 #### user parameters
-geography = "ward"
+geography = "LA"
 
 
 #### model
@@ -35,12 +35,18 @@ select_primary_school_population_by_geography <- function(geography){
 
 calculate_capacity_by_geography <- function(geography){
   capacity <- read.csv("data/clean/GM_schools_dataset.csv", stringsAsFactors = F)
-  aggregated_capacity <- aggregate(capacity$Netcapacity..1, by=list(Geography=capacity$Local.Authority.Code), FUN=sum)
-  aggregated_capacity <- setnames(aggregated_capacity, "x", "aggregated net capacity")
+  if (geography == "ward") {
+    aggregated_capacity <- aggregate(capacity$Netcapacity..1, by=list(Geography=capacity$Ward.Code), FUN=sum)
+    aggregated_capacity <- setnames(aggregated_capacity, "x", "aggregated net capacity")
+  } else {
+    if (geography == "LA") {
+      aggregated_capacity <- aggregate(capacity$Netcapacity..1, by=list(Geography=capacity$Local.Authority.Code), FUN=sum)
+      aggregated_capacity <- setnames(aggregated_capacity, "x", "aggregated net capacity")
+    }
+  }
+  
   return(aggregated_capacity)
 }
-
-calculate_capacity_by_geography()
 
 
 ### run the model
@@ -48,5 +54,8 @@ GM_boundaries_by_geography <- select_boundaries_by_geography(geography)
 #View(boundaries@data)
 #plot(boundaries)
 GM_Primary_school_population_by_area_and_age <- select_primary_school_population_by_geography(geography)
+
+GM_school_capacity_by_geography <- calculate_capacity_by_geography(geography)
+
 
 
