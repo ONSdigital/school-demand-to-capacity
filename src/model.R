@@ -20,11 +20,22 @@ select_boundaries_by_geography <- function(geography){
       boundaries <- readShapePoly("data/clean/LA_shapefile_GM/GM_LA.shp")
     }
   }
-  return(boundaries)
 }
 
+select_primary_school_population_by_geography <- function(geography){
+  if (geography == "ward") {
+    population <- read.csv("data/clean/ward_population.csv", stringsAsFactors = F)
+  } else {
+    if (geography == "LA") {
+      population <- read.csv("data/clean/LA_Population.csv", stringsAsFactors = F)
+    }
+  }
+}
 
 ### run the model
-boundaries <- select_boundaries_by_geography(geography)
+GM_boundaries_by_geography <- select_boundaries_by_geography(geography)
 #View(boundaries@data)
 #plot(boundaries)
+GM_Primary_school_population_by_area_and_age <- select_primary_school_population_by_geography(geography)
+
+

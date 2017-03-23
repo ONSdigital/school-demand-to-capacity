@@ -3,11 +3,8 @@ library(data.table)
 library(sqldf)
 library(testthat)
 
-# set working directory
-setwd("H:\\Desktop")
-
 # import Ward dataset
-wards <- read.csv("Ward_Ages_SQL_Friendly_Input.csv", stringsAsFactors = F)
+wards <- read.csv("data/raw/Ward_Ages_SQL_Friendly_Input.csv", stringsAsFactors = F)
 
 ward_dataset <- sqldf(
                       "SELECT WardCode, WardName, LocalAuthority, AllAges, X5, X6, X7, X8, X9, X10, X11
@@ -82,4 +79,4 @@ for (k in 1:dim(ward_dataset)[1])                                               
 
 #end of the loop to test each age  
 
-write.csv(Ward_Final, "Ward_Ages_Output.csv", row.names = F) 
+write.csv(Ward_Final, "data/clean/ward_population.csv", row.names = F) 
