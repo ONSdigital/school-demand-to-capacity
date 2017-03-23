@@ -10,9 +10,10 @@ pom.xml.asc
 .hgignore
 .hg/
 *.DS_Store
+.Rproj.user/
+*.Rhistory
 
 
 data/raw/Local_Authority_Districts_December_2015_Full_Extent_Boundaries_in_Great_Britain.shp
 data/raw/Wards_December_2016_Full_Extent_Boundaries_in_Great_Britain.shp
 data/raw/National_Statistics_Postcode_Lookup_UK.csv
-.Rproj.user/
