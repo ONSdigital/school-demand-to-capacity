@@ -67,7 +67,7 @@ ui <- fluidPage(
 
 server <- function(input, output) {
   output$map <- renderPlot({
-    plot(select_boundaries_by_geography(input$geography))})
+    plot(select_boundaries_by_geography(input$geography))}) ### Needs to take 'joined' dataset
 }
 
 shinyApp(ui = ui, server = server)
