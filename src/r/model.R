@@ -1,16 +1,16 @@
 #install.packages("maptools")
+#install.packages("testthat")
 library(maptools)
 library(data.table)
-
-#### user parameters
-geography = "LA"
-
+library(testthat)
+library(dplyr)
 
 #### model
 # write a series of functions that correspond to the
 # transformation boxes on the flowchart (green rectangles,
 # https://docs.google.com/drawings/d/1SzfSVf9lA7B8NrprYyWyAurJUpAbXZujMLMTiKW5gYk/edit)
 # then call the functions together at the end to run the model
+# geography is user defined (LA or Ward)
 
 ### functions
 select_boundaries_by_geography <- function(geography){
@@ -48,6 +48,22 @@ calculate_capacity_by_geography <- function(geography){
   return(aggregated_capacity)
 }
 
+Calculate_demand_by_geography <- function(GM_Primary_school_population_by_area_and_age){
+  
+  #could do this using aggregate function as below, but have used dplyr instead
+  #aggregated_population <- aggregate(GM_Primary_school_population_by_area_and_age$Population, by=list(Geography=GM_Primary_school_population_by_area_and_age$LA), FUN=sum)
+  #aggregated_population <- setnames(aggregated_population,"x","Demand")
+  
+  aggregated_population <- GM_Primary_school_population_by_area_and_age %>% 
+      group_by(LA) %>%
+      summarise(demand=sum(Population))
+        
+  
+  }
+
+
+#### user parameters
+geography = "ward"
 
 ### run the model
 GM_boundaries_by_geography <- select_boundaries_by_geography(geography)
@@ -55,6 +71,9 @@ GM_boundaries_by_geography <- select_boundaries_by_geography(geography)
 #plot(GM_boundaries_by_geography)
 GM_Primary_school_population_by_area_and_age <- select_primary_school_population_by_geography(geography)
 GM_school_capacity_by_geography <- calculate_capacity_by_geography(geography)
+
+aggregated_population <- Calculate_demand_by_geography 
+
 
 
 #Tests
