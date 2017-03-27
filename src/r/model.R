@@ -61,10 +61,14 @@ calculate_capacity_by_geography <- function(geography){
 ui <- fluidPage(
   headerPanel('Where are primary state schools in relation to school age children in Greater Manchester?'),
   sidebarPanel(
-    selectInput(geography, 'Geography?', c('Ward', 'LA'))
-  ))
+    selectInput('geography', 'Please select geography', c('LA', 'ward'))),
+  mainPanel(
+    plotOutput("map")))
 
-server <- function(input, output) {}
+server <- function(input, output) {
+  output$map <- renderPlot({
+    plot(select_boundaries_by_geography(input$geography))})
+}
 
 shinyApp(ui = ui, server = server)
 
