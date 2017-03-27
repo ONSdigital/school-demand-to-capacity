@@ -48,7 +48,7 @@ calculate_capacity_by_geography <- function(geography){
   return(aggregated_capacity)
 }
 
-Calculate_demand_by_geography <- function(geography, GM_Primary_school_population_by_area_and_age){
+calculate_demand_by_geography <- function(geography, GM_Primary_school_population_by_area_and_age){
   
   #could do this using aggregate function as below, but have used dplyr instead
   #aggregated_population <- aggregate(GM_Primary_school_population_by_area_and_age$Population, by=list(Geography=GM_Primary_school_population_by_area_and_age$LA), FUN=sum)
@@ -75,8 +75,7 @@ GM_boundaries_by_geography <- select_boundaries_by_geography(geography)
 #plot(GM_boundaries_by_geography)
 GM_Primary_school_population_by_area_and_age <- select_primary_school_population_by_geography(geography)
 GM_school_capacity_by_geography <- calculate_capacity_by_geography(geography)
-
-aggregated_population <- Calculate_demand_by_geography(geography, GM_Primary_school_population_by_area_and_age)
+primary_school_demand_by_geography <- calculate_demand_by_geography(geography, GM_Primary_school_population_by_area_and_age)
 
 
 
