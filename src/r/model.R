@@ -4,8 +4,7 @@ library(maptools)
 library(data.table)
 
 #### user parameters
-geography = "LA"
-
+#geography = "LA"
 
 #### model
 # write a series of functions that correspond to the
