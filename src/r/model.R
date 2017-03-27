@@ -4,6 +4,7 @@ library(maptools)
 library(data.table)
 library(testthat)
 library(dplyr)
+library(shiny)
 
 #### model
 # write a series of functions that correspond to the
@@ -78,6 +79,21 @@ GM_school_capacity_by_geography <- calculate_capacity_by_geography(geography)
 primary_school_demand_by_geography <- calculate_demand_by_geography(geography, GM_Primary_school_population_by_area_and_age)
 
 
+## app
+
+ui <- fluidPage(
+  headerPanel('Where are primary state schools in relation to school age children in Greater Manchester?'),
+  sidebarPanel(
+    selectInput('geography', 'Please select geography', c('LA', 'ward'))),
+  mainPanel(
+    plotOutput("map")))
+
+server <- function(input, output) {
+  output$map <- renderPlot({
+    plot(select_boundaries_by_geography(input$geography))}) ### Needs to take 'joined' dataset
+}
+
+shinyApp(ui = ui, server = server)
 
 #Tests
 
