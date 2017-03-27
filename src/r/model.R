@@ -1,4 +1,5 @@
 #install.packages("maptools")
+library(shiny)
 library(maptools)
 library(data.table)
 
@@ -56,6 +57,17 @@ GM_boundaries_by_geography <- select_boundaries_by_geography(geography)
 GM_Primary_school_population_by_area_and_age <- select_primary_school_population_by_geography(geography)
 GM_school_capacity_by_geography <- calculate_capacity_by_geography(geography)
 
+## app
+
+ui <- fluidPage(
+  headerPanel('Where are primary state schools in relation to school age children in Greater Manchester?'),
+  sidebarPanel(
+    selectInput(geography, 'Geography?', c('Ward', 'LA'))
+  ))
+
+server <- function(input, output) {}
+
+shinyApp(ui = ui, server = server)
 
 #Tests
 #install.packages("testthat")
