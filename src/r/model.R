@@ -80,8 +80,19 @@ primary_school_demand_by_geography <- calculate_demand_by_geography(geography, G
 
 
 #Tests
-#install.packages("testthat")
-library(testthat)
+
+(results <- test_that("Test that the number of wards in demand set is the number in GM (=215)",
+                      {geography = "ward"
+                      GM_Primary_school_population_by_area_and_age <- select_primary_school_population_by_geography(geography)
+                      primary_school_demand_by_geography <- calculate_demand_by_geography(geography, GM_Primary_school_population_by_area_and_age)
+                        count_wards <- length (unique(primary_school_demand_by_geography$Ward.Code))
+                      expect_equal(count_wards, 215)
+                      }))
+
+
+
+
+
 (results <- test_that("Test that the number of wards is 215",
                       {number_wards <-nrow(calculate_capacity_by_geography(geography = "ward"))
                       expect_equal(number_wards, 215)
