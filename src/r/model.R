@@ -1,5 +1,6 @@
 #install.packages("maptools")
 #install.packages("testthat")
+install.packages("shiny")
 library(maptools)
 library(data.table)
 library(testthat)
@@ -60,9 +61,19 @@ calculate_demand_by_geography <- function(geography, GM_Primary_school_populatio
       summarise(demand=sum(Population))
   } else {
     if (geography == "LA") {
-      aggregated_population <- GM_Primary_school_population_by_area_and_age %>% 
+      aggregated_population_no.geo.code <- GM_Primary_school_population_by_area_and_age %>% 
         group_by(LA) %>%
         summarise(demand=sum(Population))
+      
+      # GM_Primary_school_population_by_area_and_age has no geography codes for the LAs
+      # get LA geography codes from shapefile data, leftjoin to population data
+      aggregated_population <- GM_boundaries_by_geography@data %>%
+        select(lad15cd, lad15nm) %>%
+        setnames("lad15cd","Geography") %>% 
+        setnames("lad15nm","LA") %>%
+        left_join(aggregated_population_no.geo.code, by="LA")
+      # get warning code as joining character amd factor variable
+  
     }
   }
 }
@@ -77,7 +88,6 @@ GM_boundaries_by_geography <- select_boundaries_by_geography(geography)
 GM_Primary_school_population_by_area_and_age <- select_primary_school_population_by_geography(geography)
 GM_school_capacity_by_geography <- calculate_capacity_by_geography(geography)
 primary_school_demand_by_geography <- calculate_demand_by_geography(geography, GM_Primary_school_population_by_area_and_age)
-
 
 ## app
 
