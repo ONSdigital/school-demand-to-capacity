@@ -93,10 +93,13 @@ diff_demand_capacity <- function(primary_school_demand_by_geography, GM_school_c
   join_demand_capacity$aggregated.net.capacity[is.na(join_demand_capacity$aggregated.net.capacity)] <- 0
                            
   join_demand_capacity$difference=join_demand_capacity$aggregated.net.capacity - join_demand_capacity$demand
-  }
+  
+  return(join_demand_capacity)
+}
+
 
 #### user parameters
-geography = "LA"
+geography = "ward"
 
 ### run the model
 GM_boundaries_by_geography <- select_boundaries_by_geography(geography)
@@ -107,6 +110,8 @@ GM_school_capacity_by_geography <- calculate_capacity_by_geography(geography)
 primary_school_demand_by_geography <- calculate_demand_by_geography(geography, 
                                                                     GM_Primary_school_population_by_area_and_age, 
                                                                     GM_boundaries_by_geography)
+GM_primary_school_demand_capacity_diff <- diff_demand_capacity(primary_school_demand_by_geography, GM_school_capacity_by_geography)
+
 
 ## app
 
