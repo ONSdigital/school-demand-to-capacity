@@ -111,8 +111,8 @@ shapes_data_join <- function(GM_primary_school_demand_capacity_diff, GM_boundari
     GM_boundaries_by_geography@data <-  GM_boundaries_by_geography@data %>% left_join(GM_primary_school_demand_capacity_diff, by='lad15cd')
     
     }
-     return(GM_boundaries_by_geography)  
   }
+  return(GM_boundaries_by_geography)  
 }
 
 
@@ -133,6 +133,13 @@ GM_primary_school_demand_capacity_diff <- diff_demand_capacity(primary_school_de
 GM_boundaries_with_school_data<- shapes_data_join(GM_primary_school_demand_capacity_diff, GM_boundaries_by_geography)
 
 head(GM_boundaries_with_school_data@data) #useful for checking if join has occured
+
+#### choropleth map
+brks<-c(min(GM_boundaries_with_school_data@data$difference), -0.5, 0.5,
+colours <- c("Red", "Black", "Green")
+plot(GM_boundaries_with_school_data, col=colours[findInterval(GM_boundaries_with_school_data@data$difference,
+                                                              brks,
+                                                              all.inside=T)])
 
 ## app
 
