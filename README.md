@@ -12,7 +12,7 @@ Clone this repo.
 
 ## Usage
 
-To repeat the preprocessing steps download the following file to `data/raw/`
+To repeat the preprocessing steps, please download the following file to `data/raw/` first:
 
 National postcode lookup: https://opendata.camden.gov.uk/api/views/tr8t-gqz7/rows.csv?accessType=DOWNLOAD
 
