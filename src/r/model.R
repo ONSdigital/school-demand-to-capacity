@@ -1,6 +1,8 @@
 #install.packages("maptools")
+#install.packages("data.table")
 #install.packages("testthat")
-install.packages("shiny")
+#install.packages("dplyr")
+#install.packages("shiny")
 library(maptools)
 library(data.table)
 library(testthat)
@@ -50,7 +52,9 @@ calculate_capacity_by_geography <- function(geography){
   return(aggregated_capacity)
 }
 
-calculate_demand_by_geography <- function(geography, GM_Primary_school_population_by_area_and_age){
+calculate_demand_by_geography <- function(geography, 
+                                          GM_Primary_school_population_by_area_and_age, 
+                                          GM_boundaries_by_geography){
   
   #could do this using aggregate function as below, but have used dplyr instead
   #aggregated_population <- aggregate(GM_Primary_school_population_by_area_and_age$Population, by=list(Geography=GM_Primary_school_population_by_area_and_age$LA), FUN=sum)
@@ -78,6 +82,8 @@ calculate_demand_by_geography <- function(geography, GM_Primary_school_populatio
   }
 }
 
+
+
 #### user parameters
 geography = "LA"
 
@@ -87,7 +93,9 @@ GM_boundaries_by_geography <- select_boundaries_by_geography(geography)
 #plot(GM_boundaries_by_geography)
 GM_Primary_school_population_by_area_and_age <- select_primary_school_population_by_geography(geography)
 GM_school_capacity_by_geography <- calculate_capacity_by_geography(geography)
-primary_school_demand_by_geography <- calculate_demand_by_geography(geography, GM_Primary_school_population_by_area_and_age)
+primary_school_demand_by_geography <- calculate_demand_by_geography(geography, 
+                                                                    GM_Primary_school_population_by_area_and_age, 
+                                                                    GM_boundaries_by_geography)
 
 ## app
 
@@ -110,7 +118,9 @@ shinyApp(ui = ui, server = server)
 (results <- test_that("Test that the number of wards in demand set is the number in GM (=215)",
                       {geography = "ward"
                       GM_Primary_school_population_by_area_and_age <- select_primary_school_population_by_geography(geography)
-                      primary_school_demand_by_geography <- calculate_demand_by_geography(geography, GM_Primary_school_population_by_area_and_age)
+                      primary_school_demand_by_geography <- calculate_demand_by_geography(geography, 
+                                                                                          GM_Primary_school_population_by_area_and_age, 
+                                                                                          GM_boundaries_by_geography)
                         count_wards <- length (unique(primary_school_demand_by_geography$Ward.Code))
                       expect_equal(count_wards, 215)
                       }))
@@ -119,17 +129,25 @@ shinyApp(ui = ui, server = server)
                       {# set geography to LA, make test dataframe (rename of primary_school_demand_by_geography)
                       geography = "LA"
                       GM_Primary_school_population_by_area_and_age <- select_primary_school_population_by_geography(geography)
-                      test_demand_from_LA_data <- calculate_demand_by_geography(geography, GM_Primary_school_population_by_area_and_age)
+                      test_demand_from_LA_data <- calculate_demand_by_geography(geography, 
+                                                                                GM_Primary_school_population_by_area_and_age, 
+                                                                                GM_boundaries_by_geography) 
+                    
+                      test_demand_from_LA_data <- test_demand_from_LA_data %>% select(LA, demand) # drops LA geo code
                       # set geography to ward, make primary_school_demand_by_geography, sum by LA to make test dataframe, rename columns
                       geography = "ward"
                       GM_Primary_school_population_by_area_and_age <- select_primary_school_population_by_geography(geography)
-                      primary_school_demand_by_geography <- calculate_demand_by_geography(geography, GM_Primary_school_population_by_area_and_age)
+                      primary_school_demand_by_geography <- calculate_demand_by_geography(geography, 
+                                                                                          GM_Primary_school_population_by_area_and_age,
+                                                                                          GM_boundaries_by_geography)
 
                       test_demand_from_ward_data <- primary_school_demand_by_geography %>% 
                         group_by(Local.Authority) %>%
                         summarise(demand=sum(demand)) %>%
-                        setnames("Local.Authority", "LA")
+                        setnames("Local.Authority", "LA") %>%
+                        as.data.frame() # to force into data frame only
                       # compare test dataframes, should be the same
+                      
                       expect_equal(test_demand_from_LA_data, test_demand_from_ward_data)
                       }))
 
