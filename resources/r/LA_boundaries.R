@@ -4,7 +4,7 @@ library(maptools)
 #### data
 
 # ward boundaries
-LA_boundaries <- readShapePoly("data/raw/Local_Authority_Districts_December_2015_Full_Extent_Boundaries_in_Great_Britain.shp")
+LA_boundaries <- readShapePoly("data/raw/Local_Authority_Districts_December_2015_Super_Generalised_Clipped_Boundaries_in_Great_Britain.shp")
 class(LA_boundaries) # the shapefile is read in as a SpatialPolygonsDataFrame
 slotNames(LA_boundaries) # which is actually made up of a number of parts which we access using @
 head(LA_boundaries@data) # the "data" is where we see the 'attributes' of the polygons e.g. the ward name
