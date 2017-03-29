@@ -136,6 +136,7 @@ head(GM_boundaries_with_school_data@data) #useful for checking if join has occur
 
 #### choropleth map
 brks<-c(min(GM_boundaries_with_school_data@data$difference), -0.5, 0.5,
+          max(GM_boundaries_with_school_data@data$difference)) # breaks between colours
 colours <- c("Red", "Black", "Green")
 plot(GM_boundaries_with_school_data, col=colours[findInterval(GM_boundaries_with_school_data@data$difference,
                                                               brks,
