@@ -41,11 +41,11 @@ calculate_capacity_by_geography <- function(geography){
   capacity <- read.csv("data/clean/GM_schools_dataset.csv", stringsAsFactors = F)
   if (geography == "ward") {
     aggregated_capacity <- aggregate(capacity$Netcapacity..1, by=list(Geography=capacity$Ward.Code), FUN=sum)
-    aggregated_capacity <- setnames(aggregated_capacity, "x", "aggregated net capacity")
+    aggregated_capacity <- setnames(aggregated_capacity, "x", "aggregated.net.capacity")
   } else {
     if (geography == "LA") {
       aggregated_capacity <- aggregate(capacity$Netcapacity..1, by=list(Geography=capacity$Local.Authority.Code), FUN=sum)
-      aggregated_capacity <- setnames(aggregated_capacity, "x", "aggregated net capacity")
+      aggregated_capacity <- setnames(aggregated_capacity, "x", "aggregated.net.capacity")
     }
   }
   
@@ -62,7 +62,9 @@ calculate_demand_by_geography <- function(geography,
   if (geography == "ward") {
     aggregated_population <- GM_Primary_school_population_by_area_and_age %>% 
       group_by(Ward.Code, Ward.Name, Local.Authority) %>%
-      summarise(demand=sum(Population))
+      summarise(demand=sum(Population)) %>%
+      setnames("Ward.Code", "Geography")
+    
   } else {
     if (geography == "LA") {
       aggregated_population_no.geo.code <- GM_Primary_school_population_by_area_and_age %>% 
@@ -82,6 +84,37 @@ calculate_demand_by_geography <- function(geography,
   }
 }
 
+#calculate difference between demand and capacity for geography
+diff_demand_capacity <- function(primary_school_demand_by_geography, GM_school_capacity_by_geography){
+  
+  join_demand_capacity <- primary_school_demand_by_geography %>% 
+                            left_join(GM_school_capacity_by_geography, by='Geography')
+  
+  join_demand_capacity$aggregated.net.capacity[is.na(join_demand_capacity$aggregated.net.capacity)] <- 0
+                           
+  join_demand_capacity$difference=join_demand_capacity$aggregated.net.capacity - join_demand_capacity$demand
+  
+  return(join_demand_capacity)
+}
+
+#join difference to shape file
+shapes_data_join <- function(GM_primary_school_demand_capacity_diff, GM_boundaries_by_geography){
+  if (geography == "ward") {
+    GM_primary_school_demand_capacity_diff <- setnames(GM_primary_school_demand_capacity_diff, "Geography", "wd15cd")
+
+    GM_boundaries_by_geography@data <-  GM_boundaries_by_geography@data %>% left_join(GM_primary_school_demand_capacity_diff, by='wd15cd')
+
+  } else {
+    if (geography == "LA") {
+    GM_primary_school_demand_capacity_diff <- setnames(GM_primary_school_demand_capacity_diff, "Geography", "lad15cd")
+      
+    GM_boundaries_by_geography@data <-  GM_boundaries_by_geography@data %>% left_join(GM_primary_school_demand_capacity_diff, by='lad15cd')
+    
+    }
+     return(GM_boundaries_by_geography)  
+  }
+}
+
 
 
 #### user parameters
@@ -96,6 +129,10 @@ GM_school_capacity_by_geography <- calculate_capacity_by_geography(geography)
 primary_school_demand_by_geography <- calculate_demand_by_geography(geography, 
                                                                     GM_Primary_school_population_by_area_and_age, 
                                                                     GM_boundaries_by_geography)
+GM_primary_school_demand_capacity_diff <- diff_demand_capacity(primary_school_demand_by_geography, GM_school_capacity_by_geography)
+GM_boundaries_with_school_data<- shapes_data_join(GM_primary_school_demand_capacity_diff, GM_boundaries_by_geography)
+
+head(GM_boundaries_with_school_data@data) #useful for checking if join has occured
 
 ## app
 
