@@ -17,7 +17,7 @@ library(shiny)
 ### functions
 select_boundaries_by_geography <- function(geography){
   if (geography == "ward") {
-    boundaries <- readShapePoly("data/clean/Ward_shapefile_GM/GM_wards.shp")
+    boundaries <- readShapePoly("data/clean/Ward_shapefile_GM/GM_Ward.shp")
   } else {
     if (geography == "LA") {
       boundaries <- readShapePoly("data/clean/LA_shapefile_GM/GM_LA.shp")
