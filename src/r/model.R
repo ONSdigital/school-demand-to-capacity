@@ -137,25 +137,29 @@ run_model <- function(geography){
   return(GM_boundaries_with_school_data)
 }
 
+
+plot_choropleth_map <- function(GM_boundaries_with_school_data){
+  
+  # creating breaks to colour the choropleth
+  breaks <- c(min(GM_boundaries_with_school_data@data$difference),
+              -0.5,
+              0.5,
+              max(GM_boundaries_with_school_data@data$difference)) # breaks between colours
+  
+  # positive difference = excess capacity = good = green
+  # negative difference = unmet demand = bad = red
+  colours <- c("Red", "Black", "Green")
+  
+  # plot the map
+  plot(GM_boundaries_with_school_data, col=colours[findInterval(GM_boundaries_with_school_data@data$difference,
+                                                                breaks,
+                                                                all.inside=T)])
+}
+
+
 ### plot with user parameter specified
-plot(run_model(geography = "LA"))
+plot_choropleth_map(run_model(geography = "LA"))
 
-
-#### choropleth map
-# creating breaks to colour the choropleth
-breaks <- c(min(GM_boundaries_with_school_data@data$difference),
-            -0.5,
-            0.5,
-            max(GM_boundaries_with_school_data@data$difference)) # breaks between colours
-
-# positive difference = excess capacity = good = green
-# negative difference = unmet demand = bad = red
-colours <- c("Red", "Black", "Green")
-
-# plot the map
-plot(GM_boundaries_with_school_data, col=colours[findInterval(GM_boundaries_with_school_data@data$difference,
-                                                              breaks,
-                                                              all.inside=T)])
 
 ## app
 
@@ -168,7 +172,7 @@ ui <- fluidPage(
 
 server <- function(input, output) {
   output$map <- renderPlot({
-    plot(run_model(input$geography))}) ### Needs to take 'joined' dataset
+    plot_choropleth_map(run_model(input$geography))}) ### Needs to take 'joined' dataset
 }
 
 shinyApp(ui = ui, server = server)
