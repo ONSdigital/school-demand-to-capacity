@@ -135,11 +135,19 @@ GM_boundaries_with_school_data<- shapes_data_join(GM_primary_school_demand_capac
 head(GM_boundaries_with_school_data@data) #useful for checking if join has occured
 
 #### choropleth map
-brks<-c(min(GM_boundaries_with_school_data@data$difference), -0.5, 0.5,
-          max(GM_boundaries_with_school_data@data$difference)) # breaks between colours
+# creating breaks to colour the choropleth
+breaks <- c(min(GM_boundaries_with_school_data@data$difference),
+            -0.5,
+            0.5,
+            max(GM_boundaries_with_school_data@data$difference)) # breaks between colours
+
+# positive difference = excess capacity = good = green
+# negative difference = unmet demand = bad = red
 colours <- c("Red", "Black", "Green")
+
+# plot the map
 plot(GM_boundaries_with_school_data, col=colours[findInterval(GM_boundaries_with_school_data@data$difference,
-                                                              brks,
+                                                              breaks,
                                                               all.inside=T)])
 
 ## app
