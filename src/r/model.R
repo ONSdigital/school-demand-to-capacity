@@ -56,14 +56,14 @@ calculate_demand_by_geography <- function(geography,
                                           GM_Primary_school_population_by_area_and_age, 
                                           GM_boundaries_by_geography){
   
-  #could do this using aggregate function as below, but have used dplyr instead
-  #aggregated_population <- aggregate(GM_Primary_school_population_by_area_and_age$Population, by=list(Geography=GM_Primary_school_population_by_area_and_age$LA), FUN=sum)
-  #aggregated_population <- setnames(aggregated_population,"x","Demand")
   if (geography == "ward") {
     aggregated_population <- GM_Primary_school_population_by_area_and_age %>% 
       group_by(Ward.Code, Ward.Name, Local.Authority) %>%
       summarise(demand=sum(Population)) %>%
       setnames("Ward.Code", "Geography")
+    #alternative method without dplyr
+    #aggregated_population <- aggregate(GM_Primary_school_population_by_area_and_age$Population, by=list(Geography=GM_Primary_school_population_by_area_and_age$LA), FUN=sum)
+    #aggregated_population <- setnames(aggregated_population,"x","Demand")
     
   } else {
     if (geography == "LA") {
@@ -71,21 +71,19 @@ calculate_demand_by_geography <- function(geography,
         group_by(LA) %>%
         summarise(demand=sum(Population))
       
-      # GM_Primary_school_population_by_area_and_age has no geography codes for the LAs
-      # get LA geography codes from shapefile data, leftjoin to population data
+      # add LA codes to GM_Primary_school_population_by_area_and_age
       aggregated_population <- GM_boundaries_by_geography@data %>%
         select(lad15cd, lad15nm) %>%
         setnames("lad15cd","Geography") %>% 
         setnames("lad15nm","LA") %>%
         left_join(aggregated_population_no.geo.code, by="LA")
-      # get warning code as joining character amd factor variable
+      # note - warning code expected from joining character and factor variable
   
     }
   }
 }
 
-#calculate difference between demand and capacity for geography
-diff_demand_capacity <- function(primary_school_demand_by_geography, GM_school_capacity_by_geography){
+calculate_difference_demand_capacity <- function(primary_school_demand_by_geography, GM_school_capacity_by_geography){
   
   join_demand_capacity <- primary_school_demand_by_geography %>% 
                             left_join(GM_school_capacity_by_geography, by='Geography')
@@ -97,8 +95,9 @@ diff_demand_capacity <- function(primary_school_demand_by_geography, GM_school_c
   return(join_demand_capacity)
 }
 
-#join difference to shape file
-shapes_data_join <- function(GM_primary_school_demand_capacity_diff, GM_boundaries_by_geography){
+join_difference_to_shapefile <- function(GM_primary_school_demand_capacity_diff,
+                                         GM_boundaries_by_geography,
+                                         geography){
   if (geography == "ward") {
     GM_primary_school_demand_capacity_diff <- setnames(GM_primary_school_demand_capacity_diff, "Geography", "wd15cd")
 
@@ -117,30 +116,50 @@ shapes_data_join <- function(GM_primary_school_demand_capacity_diff, GM_boundari
 
 
 
-#### user parameters
-geography = "LA"
-
 ### run the model
-GM_boundaries_by_geography <- select_boundaries_by_geography(geography)
-#View(GM_boundaries_by_geography@data)
-#plot(GM_boundaries_by_geography)
-GM_Primary_school_population_by_area_and_age <- select_primary_school_population_by_geography(geography)
-GM_school_capacity_by_geography <- calculate_capacity_by_geography(geography)
-primary_school_demand_by_geography <- calculate_demand_by_geography(geography, 
-                                                                    GM_Primary_school_population_by_area_and_age, 
-                                                                    GM_boundaries_by_geography)
-GM_primary_school_demand_capacity_diff <- diff_demand_capacity(primary_school_demand_by_geography, GM_school_capacity_by_geography)
-GM_boundaries_with_school_data<- shapes_data_join(GM_primary_school_demand_capacity_diff, GM_boundaries_by_geography)
+run_model <- function(geography){
+  GM_boundaries_by_geography <- select_boundaries_by_geography(geography)
+  #ways to look at the data:
+  #View(GM_boundaries_by_geography@data)
+  #plot(GM_boundaries_by_geography)
+  GM_Primary_school_population_by_area_and_age <- select_primary_school_population_by_geography(geography)
+  GM_school_capacity_by_geography <- calculate_capacity_by_geography(geography)
+  primary_school_demand_by_geography <- calculate_demand_by_geography(geography, 
+                                                                      GM_Primary_school_population_by_area_and_age, 
+                                                                      GM_boundaries_by_geography)
+  GM_primary_school_demand_capacity_diff <- calculate_difference_demand_capacity(primary_school_demand_by_geography, GM_school_capacity_by_geography)
+  GM_boundaries_with_school_data <- join_difference_to_shapefile(GM_primary_school_demand_capacity_diff,
+                                                                 GM_boundaries_by_geography,
+                                                                 geography)
+  #useful for checking if join has occured:
+  #head(GM_boundaries_with_school_data@data)
+  
+  return(GM_boundaries_with_school_data)
+}
 
-head(GM_boundaries_with_school_data@data) #useful for checking if join has occured
 
-#### choropleth map
-brks<-c(min(GM_boundaries_with_school_data@data$difference), -0.5, 0.5,
-          max(GM_boundaries_with_school_data@data$difference)) # breaks between colours
-colours <- c("Red", "Black", "Green")
-plot(GM_boundaries_with_school_data, col=colours[findInterval(GM_boundaries_with_school_data@data$difference,
-                                                              brks,
-                                                              all.inside=T)])
+plot_choropleth_map <- function(GM_boundaries_with_school_data){
+  
+  # creating breaks to colour the choropleth
+  breaks <- c(min(GM_boundaries_with_school_data@data$difference),
+              -0.5,
+              0.5,
+              max(GM_boundaries_with_school_data@data$difference)) # breaks between colours
+  
+  # positive difference = excess capacity = good = green
+  # negative difference = unmet demand = bad = red
+  colours <- c("Red", "Black", "Green")
+  
+  # plot the map
+  plot(GM_boundaries_with_school_data, col=colours[findInterval(GM_boundaries_with_school_data@data$difference,
+                                                                breaks,
+                                                                all.inside=T)])
+}
+
+
+### plot with user parameter specified
+plot_choropleth_map(run_model(geography = "LA"))
+
 
 ## app
 
@@ -153,7 +172,7 @@ ui <- fluidPage(
 
 server <- function(input, output) {
   output$map <- renderPlot({
-    plot(select_boundaries_by_geography(input$geography))}) ### Needs to take 'joined' dataset
+    plot_choropleth_map(run_model(input$geography))}) ### Needs to take 'joined' dataset
 }
 
 shinyApp(ui = ui, server = server)
