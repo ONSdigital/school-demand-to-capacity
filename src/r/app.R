@@ -2,6 +2,7 @@
 #install.packages("data.table")
 #install.packages("dplyr")
 #install.packages("shiny")
+#install.packages("testthat")
 library(maptools)
 library(data.table)
 library(dplyr)
