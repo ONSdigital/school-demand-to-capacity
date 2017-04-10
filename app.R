@@ -9,6 +9,7 @@ library(dplyr)
 library(testthat)
 library(shiny)
 
+
 #### model
 # write a series of functions that correspond to the
 # transformation boxes on the flowchart (green rectangles,
@@ -138,6 +139,7 @@ run_model <- function(geography){
 }
 
 
+### custom mapping function
 plot_choropleth_map <- function(GM_boundaries_with_school_data){
   
   # creating breaks to colour the choropleth
@@ -156,14 +158,15 @@ plot_choropleth_map <- function(GM_boundaries_with_school_data){
                                                                 all.inside=T)])
 }
 
-
-### plot with user parameter specified from the command line
+### map the results of the model with user parameter specified from the command line
 #plot_choropleth_map(run_model(geography = "ward"))
 
-## Tests
+
+#### Tests
 test_results <- test_dir(".", reporter="summary")
 
-## app
+
+#### app
 
 ui <- fluidPage(
   headerPanel('Where are primary state schools in relation to school age children in Greater Manchester?'),
